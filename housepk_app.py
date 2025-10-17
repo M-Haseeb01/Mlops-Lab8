@@ -5,35 +5,25 @@ import numpy as np
 from flask import Flask, render_template, request, redirect, url_for
 
 APP_ROOT = os.path.dirname(__file__)
-MODEL_DIR = os.path.join(APP_ROOT, "models")
+
 
 # Load artifacts
-model = joblib.load(os.path.join(MODEL_DIR, "house_price_model.pkl"))
-feature_list = joblib.load(os.path.join(MODEL_DIR, "model_features.pkl"))  # ordered
-label_encoders = joblib.load(os.path.join(MODEL_DIR, "label_encoders.pkl"))
-feature_field_map = joblib.load(os.path.join(MODEL_DIR, "feature_field_map.pkl"))
+MODEL_PATH = os.path.join(APP_ROOT, "model.pkl")
 
-# build metadata for template
-feature_meta = []
-for feat in feature_list:
-    field_name = feature_field_map[feat]
-    if feat in label_encoders:
-        # categorical -> dropdown
-        classes = [str(x) for x in label_encoders[feat].classes_.tolist()]
-        feature_meta.append({
-            "name": feat,
-            "field": field_name,
-            "type": "categorical",
-            "options": classes
-        })
-    else:
-        # numeric -> number input
-        feature_meta.append({
-            "name": feat,
-            "field": field_name,
-            "type": "numeric",
-            "options": None
-        })
+# Load only your model (ignore others for now)
+model = joblib.load(MODEL_PATH)
+
+# Define placeholder features manually (since we don't have metadata files)
+feature_list = ['sepal length (cm)', 'sepal width (cm)', 'petal length (cm)', 'petal width (cm)']
+feature_field_map = {f: f for f in feature_list}
+label_encoders = {}
+
+# Build basic meta info for form inputs
+feature_meta = [
+    {"name": f, "field": f, "type": "numeric", "options": None}
+    for f in feature_list
+]
+
 
 app = Flask(__name__)
 app.config['TEMPLATES_AUTO_RELOAD'] = True
