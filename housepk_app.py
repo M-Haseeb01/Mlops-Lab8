@@ -38,6 +38,7 @@ def predict():
     row = []
     
     print("Added a new feature")
+    print("Added a second feature")
     for feat in feature_list:
         field = feature_field_map[feat]
         val = request.form.get(field)
