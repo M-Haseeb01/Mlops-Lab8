@@ -36,6 +36,8 @@ def index():
 def predict():
     # build input vector in same order as feature_list
     row = []
+    
+    print("Added a new feature")
     for feat in feature_list:
         field = feature_field_map[feat]
         val = request.form.get(field)
